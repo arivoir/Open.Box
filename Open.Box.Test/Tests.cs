@@ -15,8 +15,11 @@ public class Tests
         Env.Load();
         var clientId = Environment.GetEnvironmentVariable("CLIENT_ID")!;
         var clientSecret = Environment.GetEnvironmentVariable("CLIENT_SECRET")!;
-        var refreshToken = Environment.GetEnvironmentVariable("REFRESH_TOKEN")!;
-        var token = await BoxClient.ExchangeCodeForAccessTokenAsync(refreshToken, clientId, clientSecret, "https://www.woopiti.com");
+        var passphrase = Environment.GetEnvironmentVariable("PASSFRASE")!;
+        var PUBLIC_KEY_ID = Environment.GetEnvironmentVariable("PUBLIC_KEY_ID")!;
+        var enterpriseId = Environment.GetEnvironmentVariable("ENTERPRISE_ID")!;
+        var privateKey = Environment.GetEnvironmentVariable("PRIVATE_KEY")!.Replace("\\n", Environment.NewLine);
+        var token = await BoxClient.ExchangeJWTForAccessTokenAsync(clientId, clientSecret, enterpriseId, privateKey, passphrase, CancellationToken.None);
         _accessToken = token.AccessToken;
         var client = new BoxClient(_accessToken);
         var rootFolderName = Guid.NewGuid().ToString();

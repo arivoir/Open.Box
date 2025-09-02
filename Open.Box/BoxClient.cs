@@ -1,8 +1,14 @@
-﻿using Open.IO;
+﻿using Microsoft.IdentityModel.Tokens;
+using Open.IO;
 using Open.Net.Http;
 using Open.OAuth2;
+using Org.BouncyCastle.Crypto.Parameters;
+using Org.BouncyCastle.OpenSsl;
 using System.Globalization;
+using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Headers;
+using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 
@@ -48,6 +54,110 @@ public class BoxClient : OAuth2Client
     public static async Task<OAuth2Token> RefreshAccessTokenAsync(string refreshToken, string clientId, string clientSecret, CancellationToken cancellationToken)
     {
         return await OAuth2Client.RefreshAccessTokenAsync(OAuthToken, refreshToken, clientId, clientSecret, cancellationToken);
+    }
+
+    class PasswordFinder : IPasswordFinder
+    {
+        private string password;
+        public PasswordFinder(string _password) { password = _password; }
+        public char[] GetPassword() { return password.ToCharArray(); }
+    }
+
+    public static async Task<OAuth2Token> ExchangeJWTForAccessTokenAsync(string clientId, string clientSecret, string enterpriseId, string privateKey, string passphrase, CancellationToken cancellationToken)
+    {
+        string authenticationUrl = "https://api.box.com/oauth2/token";
+
+        byte[] randomNumber = new byte[64];
+        RandomNumberGenerator.Create().GetBytes(randomNumber);
+        var jti = Convert.ToBase64String(randomNumber);
+
+        var claims = new List<Claim>
+        {
+            new Claim("sub", enterpriseId),
+            new Claim("box_sub_type", "enterprise"),
+            new Claim("jti", jti),
+        };
+
+        var payload = new JwtPayload(
+            clientId,
+            authenticationUrl,
+            claims,
+            null,
+            DateTime.UtcNow.AddSeconds(45)
+        );
+
+        var stringReader = new StringReader(privateKey);
+        var passwordFinder = new PasswordFinder(passphrase);
+        var pemReader = new PemReader(stringReader, passwordFinder);
+        var keyParams = (RsaPrivateCrtKeyParameters)pemReader.ReadObject();
+
+        var key = CreateRSAProvider(ToRSAParameters(keyParams));
+
+        var credentials = new SigningCredentials(
+            new RsaSecurityKey(key),
+            SecurityAlgorithms.RsaSha512
+        );
+        var header = new JwtHeader(signingCredentials: credentials);
+
+        var jst = new JwtSecurityToken(header, payload);
+        var tokenHandler = new JwtSecurityTokenHandler();
+        string assertion = tokenHandler.WriteToken(jst);
+
+        var http = new HttpClient();
+        var content = new FormUrlEncodedContent(new[]
+        {
+            new KeyValuePair<string,string>("grant_type", "urn:ietf:params:oauth:grant-type:jwt-bearer"),
+            new KeyValuePair<string,string>("client_id", clientId),
+            new KeyValuePair<string,string>("client_secret", clientSecret),
+            new KeyValuePair<string,string>("assertion", assertion)
+        });
+        var response = await http.PostAsync(authenticationUrl, content, cancellationToken);
+        if (response.IsSuccessStatusCode)
+        {
+            return await response.Content.ReadJsonAsync<OAuth2Token>();
+        }
+        else
+        {
+            throw await ProcessException(response.Content);
+        }
+    }
+    private static RSA CreateRSAProvider(RSAParameters rp)
+    {
+        var rsaCsp = RSA.Create();
+        rsaCsp.ImportParameters(rp);
+        return rsaCsp;
+    }
+
+    private static RSAParameters ToRSAParameters(RsaPrivateCrtKeyParameters privKey)
+    {
+        RSAParameters rp = new RSAParameters();
+        rp.Modulus = privKey.Modulus.ToByteArrayUnsigned();
+        rp.Exponent = privKey.PublicExponent.ToByteArrayUnsigned();
+        rp.P = privKey.P.ToByteArrayUnsigned();
+        rp.Q = privKey.Q.ToByteArrayUnsigned();
+        rp.D = ConvertRSAParametersField(privKey.Exponent, rp.Modulus.Length);
+        rp.DP = ConvertRSAParametersField(privKey.DP, rp.P.Length);
+        rp.DQ = ConvertRSAParametersField(privKey.DQ, rp.Q.Length);
+        rp.InverseQ = ConvertRSAParametersField(privKey.QInv, rp.Q.Length);
+        return rp;
+    }
+
+    private static byte[] ConvertRSAParametersField(Org.BouncyCastle.Math.BigInteger n, int size)
+    {
+        byte[] bs = n.ToByteArrayUnsigned();
+        if (bs.Length == size)
+            return bs;
+        if (bs.Length > size)
+            throw new ArgumentException("Specified size too small", "size");
+        byte[] padded = new byte[size];
+        Array.Copy(bs, 0, padded, size - bs.Length, bs.Length);
+        return padded;
+    }
+
+    private static async Task<Exception> ProcessException(HttpContent httpContent)
+    {
+        var error = await httpContent.ReadJsonAsync<OAuth2Error>();
+        return new OAuth2Exception(error);
     }
 
     #endregion
