@@ -283,7 +283,6 @@ public class BoxClient : OAuth2Client
     {
         var parameters = new Dictionary<string, string>();
         var client = CreateClient(new RetryMessageHandler());
-        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _accessToken);
         var content = new MultipartFormDataContent();
         content.Add(new StringContent(JsonSerializer.Serialize(file)), "attributes");
         content.Add(new StreamedContent(fileStream, progress, cancellationToken), "file", file.Name);
@@ -512,7 +511,7 @@ public class BoxClient : OAuth2Client
     {
         UriBuilder builder = new UriBuilder(ApiServiceUri);
         builder.Path += path;
-        builder.Query = (parameters != null && parameters.Count() > 0 ? string.Join("&", parameters.Select(pair => pair.Key + "=" + EscapeUriString(pair.Value)).ToArray()) + "&" : "") + "access_token=" + Uri.EscapeUriString(this._accessToken);
+        builder.Query = (parameters != null && parameters.Count() > 0 ? string.Join("&", parameters.Select(pair => pair.Key + "=" + EscapeUriString(pair.Value)).ToArray()) + "&" : "") /*+ "access_token=" + Uri.EscapeUriString(this._accessToken)*/;
         return builder.Uri;
     }
 
@@ -540,7 +539,7 @@ public class BoxClient : OAuth2Client
         return string.Format("users/{0}", userId ?? "me");
     }
 
-    private static HttpClient CreateClient(HttpMessageHandler filter = null)
+    private HttpClient CreateClient(HttpMessageHandler filter = null)
     {
         HttpClient client;
         if (filter != null)
@@ -548,6 +547,7 @@ public class BoxClient : OAuth2Client
         else
             client = new HttpClient();
         client.Timeout = Timeout.InfiniteTimeSpan;
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", _accessToken);
         return client;
     }
 

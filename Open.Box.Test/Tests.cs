@@ -22,13 +22,16 @@ public class Tests
         var token = await BoxClient.ExchangeJWTForAccessTokenAsync(clientId, clientSecret, enterpriseId, privateKey, passphrase, CancellationToken.None);
         _accessToken = token.AccessToken;
         var client = new BoxClient(_accessToken);
+        var currentUser = await client.GetCurrentUser(CancellationToken.None);
+        var items = await client.GetFolderItemsAsync("0");
         var rootFolderName = Guid.NewGuid().ToString();
         _rootFolderId = rootFolderName;
         var folder = new Item
         {
             Name = rootFolderName,
+            Parent = new Item { Id = "0" },
         };
-        await client.CreateFolderAsync(folder, rootFolderName);
+        await client.CreateFolderAsync(folder);
     }
 
     [Test]
