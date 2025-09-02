@@ -1,18 +1,16 @@
-﻿using System.Collections.Generic;
-using System.Runtime.Serialization;
+﻿namespace Open.Box;
 
-namespace Open.Box
+public class ItemCollection
 {
-    [DataContract]
-    public class ItemCollection
-    {
-        [DataMember(Name = "total_count")]
-        public int TotalCount { get; set; }
-        [DataMember(Name = "entries")]
-        public List<Item> Entries { get; set; }
-        [DataMember(Name = "offset")]
-        public int Offset { get; set; }
-        [DataMember(Name = "limit")]
-        public int Limit { get; set; }
-    }
+    [JsonPropertyName("total_count")]
+    public int TotalCount { get; set; }
+    
+    [JsonPropertyName("entries")]
+    public List<Item> Entries { get; set; }
+    
+    [JsonPropertyName("offset")]
+    public int Offset { get; set; }
+    
+    [JsonPropertyName("limit")]
+    public int Limit { get; set; }
 }

@@ -1,14 +1,22 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>netstandard1.3</TargetFramework>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-    <Authors>Alvaro Rivoir</Authors>
-    <Description>.Net Standard Box library</Description>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>netstandard2.1</TargetFramework>
+		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Authors>Alvaro Rivoir</Authors>
+		<Description>.Net Standard Box library</Description>
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<Version>1.0.1</Version>
+		<LangVersion>latest</LangVersion>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Open.OAuth2" Version="1.0.0" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Open.OAuth2" Version="1.0.3" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Update="Microsoft.SourceLink.GitHub" Version="8.0.0" />
+	</ItemGroup>
 
 </Project>

@@ -1,13 +1,10 @@
-﻿using System.Runtime.Serialization;
+﻿namespace Open.Box;
 
-namespace Open.Box
+public class Email
 {
-    [DataContract]
-    public class Email
-    {
-        [DataMember(Name = "access")]
-        public string Access { get; set; }
-        [DataMember(Name = "email")]
-        public string Value { get; set; }
-    }
+    [JsonPropertyName("access")]
+    public string Access { get; set; }
+    
+    [JsonPropertyName("email")]
+    public string Value { get; set; }
 }

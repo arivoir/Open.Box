@@ -1,37 +1,40 @@
-﻿using System.Collections.Generic;
-using System.Runtime.Serialization;
+﻿namespace Open.Box;
 
-namespace Open.Box
+public class Comment
 {
-    [DataContract]
-    public class Comment
-    {
-        [DataMember(Name = "id")]
-        public string Id { get; set; }
-        [DataMember(Name = "is_reply_comment")]
-        public bool IsReplyComment { get; set; }
-        [DataMember(Name = "message")]
-        public string Message { get; set; }
-        [DataMember(Name = "created_by")]
-        public User CreatedBy { get; set; }
-        [DataMember(Name = "created_at")]
-        public string CreatedAt { get; set; }
-        [DataMember(Name = "item")]
-        public Item Item { get; set; }
-        [DataMember(Name = "modified_at")]
-        public string ModifiedAt { get; set; }
-    }
+    [JsonPropertyName("id")]
+    public string Id { get; set; }
+    
+    [JsonPropertyName("is_reply_comment")]
+    public bool IsReplyComment { get; set; }
+    
+    [JsonPropertyName("message")]
+    public string Message { get; set; }
+    
+    [JsonPropertyName("created_by")]
+    public User CreatedBy { get; set; }
+    
+    [JsonPropertyName("created_at")]
+    public string CreatedAt { get; set; }
+    
+    [JsonPropertyName("item")]
+    public Item Item { get; set; }
+    
+    [JsonPropertyName("modified_at")]
+    public string ModifiedAt { get; set; }
+}
 
-    [DataContract]
-    public class CommentsCollection
-    {
-        [DataMember(Name = "total_count")]
-        public string TotalCount { get; set; }
-        [DataMember(Name = "entries")]
-        public List<Comment> Entries { get; set; }
-        [DataMember(Name = "offset")]
-        public string Offset { get; set; }
-        [DataMember(Name = "limit")]
-        public string Limit { get; set; }
-    }
+public class CommentsCollection
+{
+    [JsonPropertyName("total_count")]
+    public string TotalCount { get; set; }
+    
+    [JsonPropertyName("entries")]
+    public List<Comment> Entries { get; set; }
+    
+    [JsonPropertyName("offset")]
+    public string Offset { get; set; }
+    
+    [JsonPropertyName("limit")]
+    public string Limit { get; set; }
 }

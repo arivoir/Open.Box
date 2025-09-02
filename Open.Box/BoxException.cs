@@ -1,18 +1,16 @@
-﻿using System;
-using System.Net;
+﻿using System.Net;
 
-namespace Open.Box
+namespace Open.Box;
+
+public class BoxException : Exception
 {
-    public class BoxException : Exception
+
+    public BoxException(HttpStatusCode statusCode, Error error)
     {
-
-        public BoxException(HttpStatusCode statusCode, Error error)
-        {
-            StatusCode = statusCode;
-            Error = error;
-        }
-
-        public HttpStatusCode StatusCode { get; private set; }
-        public Error Error { get; private set; }
+        StatusCode = statusCode;
+        Error = error;
     }
+
+    public HttpStatusCode StatusCode { get; private set; }
+    public Error Error { get; private set; }
 }

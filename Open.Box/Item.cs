@@ -1,45 +1,76 @@
-﻿using System.Runtime.Serialization;
+﻿namespace Open.Box;
 
-namespace Open.Box
+public class Item
 {
-    [DataContract]
-    public class Item
-    {
-        [DataMember(Name = "type", EmitDefaultValue=false)]
-        public string Type { get; set; }
-        [DataMember(Name = "id", EmitDefaultValue = false)]
-        public string Id { get; set; }
-        [DataMember(Name = "sequence_id", EmitDefaultValue = false)]
-        public string SequenceId { get; set; }
-        [DataMember(Name = "etag", EmitDefaultValue = false)]
-        public string Etag { get; set; }
-        [DataMember(Name = "sha1", EmitDefaultValue = false)]
-        public string Sha1 { get; set; }
-        [DataMember(Name = "name", EmitDefaultValue = false)]
-        public string Name { get; set; }
-        [DataMember(Name = "created_at", EmitDefaultValue = false)]
-        public string CreatedAt { get; set; }
-        [DataMember(Name = "description", EmitDefaultValue = false)]
-        public string Description { get; set; }
-        [DataMember(Name = "size", EmitDefaultValue = false)]
-        public long Size { get; set; }
-        [DataMember(Name = "path_collection", EmitDefaultValue = false)]
-        public PathCollection PathCollection { get; set; }
-        [DataMember(Name = "created_by", EmitDefaultValue = false)]
-        public User CreatedBy { get; set; }
-        [DataMember(Name = "modified_by", EmitDefaultValue = false)]
-        public User ModifiedBy { get; set; }
-        [DataMember(Name = "owned_by", EmitDefaultValue = false)]
-        public User OwnedBy { get; set; }
-        [DataMember(Name = "shared_link", EmitDefaultValue = false)]
-        public Link SharedLink { get; set; }
-        [DataMember(Name = "folder_upload_email", EmitDefaultValue = false)]
-        public Email FolderUploadEmail { get; set; }
-        [DataMember(Name = "parent", EmitDefaultValue = false)]
-        public Item Parent { get; set; }
-        [DataMember(Name = "item_status", EmitDefaultValue = false)]
-        public string ItemStatus { get; set; }
-        [DataMember(Name = "item_collection", EmitDefaultValue = false)]
-        public ItemCollection ItemCollection { get; set; }
-    }
+    [JsonPropertyName("type")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public string Type { get; set; }
+    
+    [JsonPropertyName("id")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public string Id { get; set; }
+    
+    [JsonPropertyName("sequence_id")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public string SequenceId { get; set; }
+    
+    [JsonPropertyName("etag")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public string Etag { get; set; }
+    
+    [JsonPropertyName("sha1")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public string Sha1 { get; set; }
+    
+    [JsonPropertyName("name")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public string Name { get; set; }
+    
+    [JsonPropertyName("created_at")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public string CreatedAt { get; set; }
+    
+    [JsonPropertyName("description")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public string Description { get; set; }
+    
+    [JsonPropertyName("size")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public long Size { get; set; }
+    
+    [JsonPropertyName("path_collection")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public PathCollection PathCollection { get; set; }
+    
+    [JsonPropertyName("created_by")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public User CreatedBy { get; set; }
+    
+    [JsonPropertyName("modified_by")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public User ModifiedBy { get; set; }
+    
+    [JsonPropertyName("owned_by")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public User OwnedBy { get; set; }
+    
+    [JsonPropertyName("shared_link")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public Link SharedLink { get; set; }
+    
+    [JsonPropertyName("folder_upload_email")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public Email FolderUploadEmail { get; set; }
+    
+    [JsonPropertyName("parent")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public Item Parent { get; set; }
+    
+    [JsonPropertyName("item_status")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public string ItemStatus { get; set; }
+    
+    [JsonPropertyName("item_collection")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingDefault)]
+    public ItemCollection ItemCollection { get; set; }
 }

@@ -1,6 +1,5 @@
-﻿namespace Open.Box
+﻿namespace Open.Box;
+
+public class BoxFolder
 {
-    public class BoxFolder
-    {
-    }
 }
